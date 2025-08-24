@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polymarket-execution"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "py-clob-client>=0.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+polymarket-execute = "polymarket_execution.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+known_first_party = ["polymarket_execution"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = "py_clob_client.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = [
+    "--cov=polymarket_execution",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "-v"
+]
+
+[tool.coverage.run]
+source = ["src/polymarket_execution"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]
