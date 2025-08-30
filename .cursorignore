@@ -5,8 +5,9 @@ __pycache__/
 # Virtual environment
 .venv/
 
-# Environment variables (contains secrets)
+# Environment variables
 .env
+!.env.example
 
 # Testing and coverage
 .pytest_cache/
