@@ -72,9 +72,6 @@ Optional Safety Settings:
         action="store_true",
         help="Simulate the trade without actually placing it",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
-    )
 
     return parser
 
@@ -104,11 +101,11 @@ def validate_trade_args(args: Any) -> bool:
     return True
 
 
-def setup_logging(verbose: bool = False) -> None:
+def setup_logging() -> None:
     """Setup logging configuration."""
     import time
 
-    level = logging.DEBUG if verbose else logging.INFO
+    level = logging.INFO
 
     # Create custom formatter for UTC timestamps with microseconds
     class UTCFormatter(logging.Formatter):
@@ -190,7 +187,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Setup logging
-    setup_logging(getattr(args, "verbose", False))
+    setup_logging()
 
     # Show help if no command specified
     if not args.command:

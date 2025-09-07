@@ -29,9 +29,6 @@ class TestCLI:
         assert args.dry_run is False
         assert args.command == "trade"
 
-        # Test with verbose flag
-        args = parser.parse_args(["-v"])
-        assert args.verbose is True
 
     def test_create_parser_with_dry_run(self):
         """Test parser with dry-run flag."""
