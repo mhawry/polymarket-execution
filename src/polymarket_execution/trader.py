@@ -2,7 +2,6 @@
 Polymarket trading functionality.
 """
 
-import logging
 import re
 import time
 from functools import wraps
@@ -20,6 +19,7 @@ except ImportError as e:
     )
 
 from .config import PolymarketConfig
+from .utils import setup_logger
 
 # Retry constants
 DEFAULT_MAX_RETRIES = 3
@@ -98,38 +98,9 @@ class PolymarketTrader:
         self.config = config
         self.client: Optional[ClobClient] = None
 
-        self.logger = self._setup_logging()
+        self.logger = setup_logger(f"{__name__}.{self.__class__.__name__}")
         self._trading_limits = config.get_trading_limits()
         self._is_initialized = False
-
-    def _setup_logging(self) -> logging.Logger:
-        """
-        Set up logging configuration.
-
-        Returns:
-            logging.Logger: Configured logger instance
-        """
-
-        # Create custom formatter for UTC timestamps with microseconds
-        class UTCFormatter(logging.Formatter):
-            def formatTime(
-                self, record: logging.LogRecord, datefmt: str | None = None
-            ) -> str:
-                dt = time.gmtime(record.created)
-                microseconds = int((record.created % 1) * 1_000_000)
-                return time.strftime("%Y-%m-%dT%H:%M:%S", dt) + f".{microseconds:06d}Z"
-
-        # Configure logging with custom formatter
-        handler = logging.StreamHandler()
-        formatter = UTCFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        handler.setFormatter(formatter)
-
-        # Set up logger instance
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.INFO)
-        logger.addHandler(handler)
-
-        return logger
 
     @retry_on_failure(max_retries=DEFAULT_MAX_RETRIES, delay=DEFAULT_RETRY_DELAY)
     def initialize_client(self) -> bool:

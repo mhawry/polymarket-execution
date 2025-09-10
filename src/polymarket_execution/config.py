@@ -2,12 +2,13 @@
 Configuration management for Polymarket trading.
 """
 
-import logging
 import os
 import re
 from typing import Optional
 
-logger = logging.getLogger(__name__)
+from .utils import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class PolymarketConfig:

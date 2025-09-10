@@ -29,7 +29,6 @@ class TestCLI:
         assert args.dry_run is False
         assert args.command == "trade"
 
-
     def test_create_parser_with_dry_run(self):
         """Test parser with dry-run flag."""
         parser = create_parser()

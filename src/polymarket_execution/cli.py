@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from .config import PolymarketConfig
 from .trader import PolymarketTrader, TradingConnectionError, ValidationError
+from .utils import setup_logger
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -103,31 +104,20 @@ def validate_trade_args(args: Any) -> bool:
 
 def setup_logging() -> None:
     """Setup logging configuration."""
-    import time
-
-    level = logging.INFO
-
-    # Create custom formatter for UTC timestamps with microseconds
-    class UTCFormatter(logging.Formatter):
-        def formatTime(
-            self, record: logging.LogRecord, datefmt: str | None = None
-        ) -> str:
-            dt = time.gmtime(record.created)
-            microseconds = int((record.created % 1) * 1_000_000)
-            return time.strftime("%Y-%m-%dT%H:%M:%S", dt) + f".{microseconds:06d}Z"
-
-    # Configure logging with custom formatter
-    handler = logging.StreamHandler()
-    formatter = UTCFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
-
-    # Get root logger and configure it
+    # Get root logger and configure it using shared utility
     root_logger = logging.getLogger()
-    root_logger.setLevel(level)
+    root_logger.setLevel(logging.INFO)
 
     # Clear existing handlers to avoid duplicates
     root_logger.handlers.clear()
-    root_logger.addHandler(handler)
+
+    # Use shared setup_logger but configure as root logger
+    temp_logger = setup_logger("temp")
+
+    # Transfer the handler from temp logger to root logger
+    if temp_logger.handlers:
+        root_logger.addHandler(temp_logger.handlers[0])
+        temp_logger.handlers.clear()
 
 
 def handle_trade_command(args: Any, trader: PolymarketTrader) -> bool:
